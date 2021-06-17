@@ -20,15 +20,14 @@ const {
 function exec(cmd) {
   return new Promise((resolve, reject) => {
     process.exec(cmd, function(error, stdout, stderr) {
-      const err = error || stderr;
-      if (err) return reject(err);
+      if (error) return reject(error);
       resolve(stdout);
   });
   })
 }
 
 // 主程序函数
-function syncMe() {
+async function syncMe() {
   let manifest = {};
   let pages = [];
   let commons = [];
@@ -37,18 +36,18 @@ function syncMe() {
   manifest = readManifest();
   removeDir('dist');
   syncIcons(manifest);
-  syncModules(manifest);
+  await syncModules(manifest);
   writeFileSync('dist/manifest.json', JSON.stringify(manifest));
 }
 
-function syncModules(manifest) {
+async function syncModules(manifest) {
   const modules = readdirSync('src/pages');
-  modules.forEach(m => {
+  for (let m of modules) {
     const suffixes = ['json', 'js', 'less', 'css'];
     let module = {};
     let hasLess = false;
     const isBG = m === 'background';
-    suffixes.forEach(async sfx => {
+    for (let sfx of suffixes) {
       const filePath = `src/pages/${m}/${m}.${sfx}`;
       if (!isFileExist(filePath)) {
         if (sfx !== 'js') return;
@@ -60,17 +59,8 @@ function syncModules(manifest) {
       } else if (sfx === 'js') {
         const jsPath = `js/${m}.${getUUID()}.js`;
         if (!existsSync('dist/js')) mkdirSync('dist/js');
-        const lines = content.split('\n');
-        const fd = openSync('dist/' + jsPath, 'a');
-        lines.forEach(async line => {
-          if (!line || !line.startsWith('import')) return appendFileSync(fd, line + '\n');
-          let childPath = line.match(/^import \'([^\']+)\'/)[1];
-          if (!childPath.endsWith('.js')) childPath += '.js';
-          childPath = path.resolve(__dirname, 'src/pages', m, childPath);
-          const childContent = readFileSync(childPath, { encoding: 'utf-8' });
-          appendFileSync(fd, childContent);
-        });
-        closeSync(fd);
+        const cmd = `rollup ${filePath} -f cjs -o ${'dist/' + jsPath}`;
+        await exec(cmd);
         module[isBG ? 'scripts' : 'js'] = ['./' + jsPath];
       } else if (sfx === 'less') {
         hasLess = true;
@@ -85,14 +75,14 @@ function syncModules(manifest) {
         writeFileSync('dist/' + cssPath, content);
         module.css = ['./' + cssPath];
       }
-    });
+    }
     if (isBG) {
       manifest.background = module;
     } else {
       if (!manifest.content_scripts) manifest.content_scripts = [];
       manifest.content_scripts.push(module);
     }
-  });
+  }
 }
 
 function syncIcons(manifest) {

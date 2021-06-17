@@ -1,4 +1,4 @@
-import './js/child';
+import { test } from './js/child';
 
 console.log(test);
 console.log('Hello, background!');
