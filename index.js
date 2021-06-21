@@ -1,17 +1,13 @@
 const process = require('child_process');
-const path = require('path');
 const {
   statSync,
   rmSync,
   rmdirSync,
   mkdirSync,
   existsSync,
-  openSync,
-  closeSync,
   readFileSync,
   writeFileSync,
   copyFileSync,
-  appendFileSync,
   readdirSync,
   accessSync,
   constants
@@ -22,8 +18,8 @@ function exec(cmd) {
     process.exec(cmd, function(error, stdout, stderr) {
       if (error) return reject(error);
       resolve(stdout);
+    });
   });
-  })
 }
 
 // 主程序函数
@@ -37,7 +33,7 @@ async function syncMe() {
   removeDir('dist');
   syncIcons(manifest);
   await syncModules(manifest);
-  writeFileSync('dist/manifest.json', JSON.stringify(manifest));
+  syncManifest(manifest);
 }
 
 async function syncModules(manifest) {
@@ -98,6 +94,10 @@ function syncIcons(manifest) {
     copyFileSync(src, 'dist/' + iconPath);
     manifest.icons[size] = './' + iconPath;
   })
+}
+
+function syncManifest(manifest) {
+  writeFileSync('dist/manifest.json', JSON.stringify(manifest));
 }
 
 // 检测项目入口文件夹
