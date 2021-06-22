@@ -9,5 +9,9 @@
   },
   "author": "Eki",
   "license": "MIT",
-  "devDependencies": {}
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "less": "^4.1.1",
+    "rollup": "^2.52.2"
+  }
 }
