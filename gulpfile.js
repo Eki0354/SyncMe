@@ -13,6 +13,9 @@ const html = require('./lib/plugins/html');
 const mf = require('./lib/plugins/mf');
 const rollup = require('./lib/plugins/rollup');
 
+const args = process.argv;
+const isDev = args.includes('--watch');
+
 const manifest = {};
 
 const paths = {
@@ -31,9 +34,9 @@ task('clean', done => {
 });
 
 task('less', _ => {
-  return src(getSrc('less'))
-    .pipe(less())
-    .pipe(cssnano())
+  const stream = src(getSrc('less')).pipe(less());
+  isDev && stream.pipe(cssnano());
+  return stream
     .pipe(sorting(manifest))
     .pipe(hash())
     .pipe(css())
@@ -43,7 +46,7 @@ task('less', _ => {
 
 task('js', _ => {
   return src(getSrc('js'))
-    .pipe(rollup())
+    .pipe(rollup({ isDev }))
     .pipe(sorting(manifest))
     .pipe(hash())
     .pipe(js())
@@ -69,7 +72,7 @@ task('html', _ => {
 
 task('windUp', _ => {
   return src(paths.src + '/manifest.json')
-    .pipe(mf(manifest))
+    .pipe(mf(manifest, isDev))
     .pipe(dest(paths.dist));
 });
 
@@ -77,4 +80,4 @@ const defaultSeries = series('clean', parallel('json', 'less', 'js'), 'html', 'w
 
 task('default', defaultSeries);
 
-watch(['src'], { delay: 500 }, defaultSeries);
+isDev && watch(['src'], { delay: 500 }, defaultSeries);
