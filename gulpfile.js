@@ -73,4 +73,8 @@ task('windUp', _ => {
     .pipe(dest(paths.dist));
 });
 
-task('default', series('clean', parallel('json', 'less', 'js'), 'html', 'windUp'));
+const defaultSeries = series('clean', parallel('json', 'less', 'js'), 'html', 'windUp');
+
+task('default', defaultSeries);
+
+watch(['src'], { delay: 500 }, defaultSeries);
