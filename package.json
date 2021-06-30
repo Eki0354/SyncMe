@@ -1,6 +1,6 @@
 {
   "name": "e-syncme",
-  "version": "0.1.1-beta",
+  "version": "0.1.5-beta",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,7 @@
   },
   "author": "Eki",
   "license": "MIT",
-  "devDependencies": {
+  "dependencies": {
     "@babel/core": "^7.14.6",
     "cheerio": "^1.0.0-rc.10",
     "gulp": "^4.0.2",

@@ -12,16 +12,25 @@ const css = require('./lib/plugins/css');
 const html = require('./lib/plugins/html');
 const mf = require('./lib/plugins/mf');
 const rollup = require('./lib/plugins/rollup');
+const path = require('path');
 
 const args = process.argv;
 const isDev = args.includes('--watch');
 
 const manifest = {};
 
+const fixRoot = rootPath => {
+  const index = rootPath.indexOf('node_modules');
+  if (index > -1) rootPath = rootPath.substring(0, index - 1);
+  return rootPath;
+}
+
+const root = fixRoot(process.cwd());
+
 const paths = {
-  src: 'src',
-  dist: 'dist',
-  modules: 'src/pages'
+  src: path.resolve(root, 'src'),
+  dist: path.resolve(root, 'dist'),
+  modules: path.resolve(root, 'src/pages')
 }
 
 const getSrc = suffix => `${paths.modules}/*/*.${suffix}`;
@@ -30,7 +39,7 @@ const getDist = suffix => `${paths.dist}/${suffix}`;
 
 task('clean', done => {
   if (!existsSync(paths.dist)) return done();
-  return src(paths.dist, { read: false }).pipe(clean());
+  return src(paths.dist, { read: false }).pipe(clean({ force: true }));
 });
 
 task('less', _ => {
@@ -76,7 +85,12 @@ task('windUp', _ => {
     .pipe(dest(paths.dist));
 });
 
-const defaultSeries = series('clean', parallel('json', 'less', 'js'), 'html', 'windUp');
+task('finished', done => {
+  console.log('已完成构建！');
+  done();
+});
+
+const defaultSeries = series('clean', parallel('json', 'less', 'js'), 'html', 'windUp', 'finished');
 
 task('default', defaultSeries);
 
