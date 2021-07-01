@@ -19,6 +19,7 @@ const isDev = args.includes('--watch');
 
 const manifest = {};
 
+// 脚手架命令调用时，会将此脚本的工作目录更改至脚本文件所在目录，需要手动剪掉多余部分。
 const fixRoot = rootPath => {
   const index = rootPath.indexOf('node_modules');
   if (index > -1) rootPath = rootPath.substring(0, index - 1);
@@ -80,7 +81,8 @@ task('html', _ => {
 });
 
 task('windUp', _ => {
-  return src(paths.src + '/manifest.json')
+  const mfPath = path.resolve(paths.src, 'manifest.json');
+  return src(mfPath)
     .pipe(mf(manifest, isDev))
     .pipe(dest(paths.dist));
 });
@@ -94,4 +96,4 @@ const defaultSeries = series('clean', parallel('json', 'less', 'js'), 'html', 'w
 
 task('default', defaultSeries);
 
-isDev && watch(['src'], { delay: 500 }, defaultSeries);
+isDev && watch(paths.src, { delay: 500 }, defaultSeries);

@@ -44,9 +44,17 @@ npm install e-syncme-cli -g
 
 + 新建项目
 
-```
-syncme create
-```
+    - 新建并自动安装依赖项
+
+    ```
+    syncme create
+    ```
+
+    - 选项 -ni | 添加此选项后，不会自动安装依赖项
+
+    ```
+    syncme create -ni
+    ```
 
 或者参考[手动搭建SyncMe框架](#手动搭建SyncMe框架项目)
 
