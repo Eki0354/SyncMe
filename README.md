@@ -168,3 +168,27 @@ syncme m -r [oldname] [newname]
 + js或scripts | **不允许手动配置** | 在模块目录下同名js文件中书写代码即可
 
 + css | **不允许手动配置** | 在模块目录下同名css文件中书写代码即可
+
+
+
+#### 方法
+
+
+
+##### 内置方法
+
++ syncLoad | 异步dom加载执行模块
+
+    - 参数&emsp;&emsp;parentNode&emsp;&emsp;string | Node&emsp;父节点或其选择器
+    - 参数&emsp;&emsp;childSelector &ensp;&emsp;string&ensp;&emsp;&emsp;&emsp;&emsp;子节点选择器
+    - 参数&emsp;&emsp;callback&emsp;&emsp;&emsp;&emsp;function &emsp;&emsp;&emsp;异步加载回调
+    - 参数&emsp;&emsp;config &ensp;&emsp;&emsp;&emsp;&emsp;object&ensp;&emsp;&emsp;&emsp;&emsp;监听配置项
+    - 返回值&emsp;void
+
+子节点选择器需要传入从父节点下算起的局部选择器，既不包含父节点及更外层节点；
+
+回调方法中可使用两个参数，即异步加载获取得到的父节点对象和子节点对象；
+
+使用MutationObserver监听，因此监听配置项为其实例的observe方法中传入的配置对象，具体参考[observe方法](https://developer.mozilla.org/zh-CN/docs/Web/API/MutationObserver/observe)；
+
+**注意：**父节点参数不能传入一个动态节点，否则初始化或其改变时不能重新加载回调；并且丢失后内存无法回收。
