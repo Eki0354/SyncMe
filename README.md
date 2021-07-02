@@ -177,7 +177,7 @@ syncme m -r [oldname] [newname]
 
 ##### 内置方法
 
-+ syncLoad | 异步dom加载执行模块
++ **<font color=#558776>syncLoad</font>** | 异步dom加载执行模块
 
     - 参数&emsp;&emsp;parentNode&emsp;&emsp;string | Node&emsp;父节点或其选择器
     - 参数&emsp;&emsp;childSelector &ensp;&emsp;string&ensp;&emsp;&emsp;&emsp;&emsp;子节点选择器

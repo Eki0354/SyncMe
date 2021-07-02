@@ -35,10 +35,3 @@ function syncLoad(parentNode = document, childSelector, callback, config = {}) {
 }
 
 exports.syncLoad = syncLoad;
-
-// 导出chrome extension API配置，方便代码自动完成
-exports.chrome = {
-  notification: {
-    create
-  }
-}
